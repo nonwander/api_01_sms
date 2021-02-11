@@ -8,8 +8,8 @@ from twilio.rest import Client
 load_dotenv()
 account_sid = os.getenv('SID')
 auth_token = os.getenv('TOKEN_TWILIO')
-phone_from = os.getenv('PHONE_FROM')
-phone_to = os.getenv('PHONE_TO')
+number_from = os.getenv('NUMBER_FROM')
+number_to = os.getenv('NUMBER_TO')
 client = Client(account_sid, auth_token)
 
 
@@ -29,8 +29,8 @@ def send_sms(sms_text):
     message = client.messages \
                     .create(
                         body=sms_text,
-                        from_=phone_from,
-                        to=phone_to
+                        from_=number_from,
+                        to=number_to,
                     )
     return message.sid
 
