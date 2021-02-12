@@ -5,33 +5,36 @@ import requests
 from dotenv import load_dotenv
 from twilio.rest import Client
 
+VER_API_VK = 5.92
+URL_API_VK = 'https://api.vk.com/method/users.get'
 load_dotenv()
 account_sid = os.getenv('SID')
 auth_token = os.getenv('TOKEN_TWILIO')
 number_from = os.getenv('NUMBER_FROM')
 number_to = os.getenv('NUMBER_TO')
+token_vk = os.getenv('TOKEN_VK')
 client = Client(account_sid, auth_token)
 
 
 def get_status(user_id):
     params = {
-        'access_token': os.getenv('TOKEN_VK'),
+        'access_token': token_vk,
         'user_ids': user_id,
         'fields': 'online',
-        'v': 5.92
+        'v': VER_API_VK
     }
-    url_vk_api = 'https://api.vk.com/method/users.get'
-    status = requests.post(url_vk_api, params=params)
-    return status.json()['response'][0]['online']
+    status = requests.post(URL_API_VK, params=params).json()['response']
+    return [
+        friend for friend in status if friend['id'] == int(user_id)
+    ][0]['online']
 
 
 def send_sms(sms_text):
-    message = client.messages \
-                    .create(
-                        body=sms_text,
-                        from_=number_from,
-                        to=number_to,
-                    )
+    message = client.messages.create(
+        body=sms_text,
+        from_=number_from,
+        to=number_to,
+    )
     return message.sid
 
 
