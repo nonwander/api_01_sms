@@ -1,7 +1,7 @@
 import os
+import requests
 import time
 
-import requests
 from dotenv import load_dotenv
 from twilio.rest import Client
 
@@ -23,10 +23,13 @@ def get_status(user_id):
         'fields': 'online',
         'v': VER_API_VK
     }
-    status = requests.post(URL_API_VK, params=params).json()['response']
-    return [
-        friend for friend in status if friend['id'] == int(user_id)
-    ][0]['online']
+    try:
+        status = requests.post(URL_API_VK, params=params).json()['response']
+        return status[0]['online']
+    except KeyError:
+        status = 0
+    except Exception:
+        status = 0
 
 
 def send_sms(sms_text):
