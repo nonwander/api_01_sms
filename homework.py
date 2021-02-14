@@ -26,10 +26,8 @@ def get_status(user_id):
     try:
         status = requests.post(URL_API_VK, params=params).json()['response']
         return status[0]['online']
-    except KeyError:
-        status = 0
     except Exception:
-        status = 0
+        return 0
 
 
 def send_sms(sms_text):
